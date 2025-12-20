@@ -1,0 +1,42 @@
+incident_id,date,severity,service,team,duration_minutes,mttr_minutes,customer_impact,root_cause_category,primary_responder,additional_responders,cross_team,repeat_incident,related_incidents,status,estimated_revenue_impact
+INC-2024-033,2024-07-02,SEV-3,notification-service,platform,45,38,low,configuration error,lisa.wong,,false,false,,resolved,0
+INC-2024-034,2024-07-05,SEV-2,payment-gateway,payment,127,115,medium,database timeout,dev.patel,lisa.wong,true,false,,resolved,8500
+INC-2024-035,2024-07-08,SEV-4,reporting-service,analytics,22,18,none,query optimization,john.smith,,false,false,,resolved,0
+INC-2024-036,2024-07-12,SEV-2,api-gateway,platform,89,76,medium,rate limiting bug,lisa.wong,tom.chen,true,false,,resolved,3200
+INC-2024-037,2024-07-15,SEV-3,user-auth,platform,56,49,low,session expiry issue,marcus.rodriguez,,false,false,,resolved,0
+INC-2024-038,2024-07-18,SEV-1,payment-gateway,payment,142,128,high,payment processor API down,dev.patel,"lisa.wong,sarah.chen,marcus.rodriguez",true,false,,resolved,45000
+INC-2024-039,2024-07-22,SEV-3,email-service,platform,34,29,low,SMTP rate limit,lisa.wong,,false,false,,resolved,0
+INC-2024-040,2024-07-25,SEV-2,checkout-flow,payment,98,87,medium,cart session timeout,dev.patel,anna.kim,true,true,INC-2024-021,resolved,12000
+INC-2024-041,2024-07-28,SEV-4,admin-dashboard,product,18,15,none,UI rendering bug,rachel.kumar,,false,false,,resolved,0
+INC-2024-042,2024-08-01,SEV-2,billing-service,billing,112,98,medium,invoice generation failure,anna.kim,dev.patel,true,false,,resolved,6800
+INC-2024-043,2024-08-04,SEV-3,search-service,product,67,59,low,elasticsearch query timeout,jake.chen,,false,false,,resolved,0
+INC-2024-044,2024-08-07,SEV-2,payment-gateway,payment,91,79,medium,fraud detection false positives,dev.patel,,false,false,,resolved,9500
+INC-2024-045,2024-08-11,SEV-4,notification-service,platform,28,22,none,webhook retry loop,lisa.wong,,false,false,,resolved,0
+INC-2024-046,2024-08-14,SEV-3,api-gateway,platform,78,68,low,memory leak,tom.chen,lisa.wong,true,false,,resolved,0
+INC-2024-047,2024-08-18,SEV-2,user-auth,platform,134,119,medium,OAuth token validation,marcus.rodriguez,tom.chen,true,false,,resolved,4200
+INC-2024-048,2024-08-21,SEV-3,payment-gateway,payment,53,46,low,payment method validation,dev.patel,,false,false,,resolved,1800
+INC-2024-049,2024-08-25,SEV-1,cdn-delivery,platform,203,186,high,CDN provider outage,tom.chen,"lisa.wong,sarah.chen,marcus.rodriguez",true,false,,resolved,78000
+INC-2024-050,2024-08-28,SEV-4,reporting-service,analytics,31,26,none,dashboard cache miss,john.smith,,false,false,,resolved,0
+INC-2024-051,2024-09-01,SEV-2,checkout-flow,payment,87,74,medium,shipping calculator API timeout,dev.patel,rachel.kumar,true,false,,resolved,7200
+INC-2024-052,2024-09-04,SEV-3,email-service,platform,44,37,low,template rendering error,lisa.wong,,false,false,,resolved,0
+INC-2024-053,2024-09-07,SEV-2,notification-service,platform,156,142,medium,database connection timeout,lisa.wong,tom.chen,true,true,INC-2024-021,resolved,5500
+INC-2024-054,2024-09-10,SEV-4,admin-dashboard,product,19,16,none,export CSV timeout,rachel.kumar,,false,false,,resolved,0
+INC-2024-055,2024-09-12,SEV-3,payment-gateway,payment,62,54,low,refund processing delay,dev.patel,,false,false,,resolved,2100
+INC-2024-056,2024-09-15,SEV-2,billing-service,billing,109,95,medium,subscription renewal failure,anna.kim,dev.patel,true,true,INC-2024-042,resolved,11500
+INC-2024-057,2024-09-18,SEV-3,search-service,product,71,63,low,index refresh delay,jake.chen,,false,false,,resolved,0
+INC-2024-058,2024-09-21,SEV-4,notification-service,platform,26,21,none,rate limiting on SMS,lisa.wong,,false,false,,resolved,0
+INC-2024-059,2024-09-24,SEV-2,api-gateway,platform,118,103,medium,authentication middleware crash,tom.chen,marcus.rodriguez,true,false,,resolved,4800
+INC-2024-060,2024-09-27,SEV-3,payment-gateway,payment,58,49,low,currency conversion cache,dev.patel,,false,false,,resolved,1600
+INC-2024-089,2024-09-12,SEV-1,payment-gateway,payment,227,227,critical,database connection pool exhaustion,dev.patel,"lisa.wong,sarah.chen,marcus.rodriguez,anna.kim,tom.chen",true,true,"INC-2024-021,INC-2024-053",resolved,127000
+INC-2024-061,2024-09-30,SEV-2,checkout-flow,payment,96,83,medium,inventory service timeout,dev.patel,jake.chen,true,false,,resolved,8900
+INC-2024-062,2024-10-01,SEV-4,reporting-service,analytics,23,19,none,data export memory spike,john.smith,,false,false,,resolved,0
+INC-2024-021,2024-03-15,SEV-2,billing-service,billing,134,121,medium,database connection leak,anna.kim,lisa.wong,true,false,,resolved,8200
+INC-2023-142,2023-11-08,SEV-3,reporting-service,analytics,87,78,low,connection pool timeout,john.smith,lisa.wong,true,false,,resolved,2400
+INC-2024-018,2024-03-02,SEV-2,payment-gateway,payment,98,86,medium,transaction validation timeout,dev.patel,,false,false,,resolved,7800
+INC-2024-063,2024-10-03,SEV-3,user-auth,platform,49,42,low,password reset email delay,marcus.rodriguez,,false,false,,resolved,0
+INC-2024-064,2024-10-05,SEV-2,payment-gateway,payment,102,89,medium,payment webhook delivery failure,dev.patel,tom.chen,true,false,,resolved,9200
+INC-2024-065,2024-10-07,SEV-4,notification-service,platform,21,17,none,push notification badge count,lisa.wong,,false,false,,resolved,0
+INC-2024-066,2024-10-09,SEV-3,billing-service,billing,66,58,low,invoice PDF generation timeout,anna.kim,,false,true,INC-2024-042,resolved,1900
+INC-2024-067,2024-10-11,SEV-2,api-gateway,platform,124,108,medium,circuit breaker misconfiguration,tom.chen,lisa.wong,true,false,,resolved,5600
+INC-2024-068,2024-10-14,SEV-3,search-service,product,54,47,low,search suggestions stale,jake.chen,,false,false,,resolved,0
+INC-2024-069,2024-10-16,SEV-4,admin-dashboard,product,17,14,none,analytics widget loading slow,rachel.kumar,,false,false,,resolved,0

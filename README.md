@@ -1,237 +1,98 @@
-# 🧠 Advanced LLM Systems Challenge
+# RAG Enterprise - Decision-Support Copilot
 
-### *“Internal Operations Intelligence Copilot”*
+## What I'm Building
 
-## 🎯 Objective
+An **internal operations AI system** that produces structured, decision-ready outputs from heterogeneous data sources. Not a chatbot—a decision support tool.
 
-Build an **AI copilot for an operations team** that can:
-
-1. Answer questions grounded in internal documents
-2. Compare options and highlight risks
-3. Produce **structured, decision-ready outputs**
-4. Cite sources
-5. Work on **messy, heterogeneous data**
-
-No fine-tuning. No expensive infra.
+**Core challenge**: Multi-document reasoning + conflicting sources + structured outputs + source attribution.
 
 ---
 
-## 🏗️ Scenario
+## Requirements
 
-You’ve joined a mid-size company (~300 employees).
+✅ **RAG pipeline**: Chunk → Embed → Vector DB → Retrieve top-k
+✅ **Decision outputs**: Pros/cons, risks, recommendations (not just answers)
+✅ **Structured JSON**: Schema-validated responses
+✅ **Source attribution**: Every claim cites document + section
+✅ **Failure handling**: Refuse when evidence insufficient
 
-The **Operations division** struggles with:
-
-* Scattered documentation (PDFs, spreadsheets, notes)
-* Repeated questions
-* Inconsistent weekly reports
-* Decisions based on partial context
-
-Your task is to build an **internal AI system** that helps ops managers make decisions faster and with evidence.
+**Constraints**: No fine-tuning. Cheap models only (GPT-4o-mini / local).
 
 ---
 
-## 📦 Provided Data (you create this)
+## Dataset
 
-You’ll create a **mini but realistic corpus**:
+**Scenario**: TechCorp (300 employees) debating whether to centralize incident response
 
-### 1️⃣ Documents (required)
+| Type | Files | Purpose |
+|------|-------|---------|
+| **Documents** | 3 markdown (→PDF) | Process docs, postmortem, strategic planning |
+| **Structured** | 2 CSV files | Incident log (42 records), resource allocation (9 teams) |
+| **Conversations** | 1 Slack export | 78 messages with conflicting opinions |
 
-Create:
-
-* **3 PDFs** (or markdown → PDF):
-
-  * Ops process doc
-  * Incident postmortem
-  * Quarterly planning notes
-
-* **2 CSV or Excel files**
-
-  * Incident log
-  * Resource allocation table
-
-* **1 Slack-style text export**
-
-  * Simulated conversations with conflicting info
-
-Total size can be small (20–40 pages equivalent).
+**Key feature**: All data is contextually coherent—references same incidents, teams, decisions.
 
 ---
 
-## 🧩 Core System Requirements
+## Example Decision Query
 
-### 1️⃣ Retrieval-Augmented Generation (mandatory)
+**Q**: *"Should we centralize incident response or keep team-based ownership?"*
 
-* Chunk documents intelligently
-* Embed them
-* Store in a vector DB (FAISS, Chroma, SQLite-based)
-* Retrieve top-k with metadata filtering
-
-No fine-tuning allowed.
-
----
-
-### 2️⃣ Decision-Support Output (not just answers)
-
-For queries like:
-
-> *“Should we centralise incident response or keep team-based ownership?”*
-
-Your system must return:
-
-* Summary of relevant evidence
-* Pros / cons
-* Risks
-* Recommendation
-* Sources (doc + section)
-
-This is **hard** — that’s intentional.
-
----
-
-### 3️⃣ Structured Outputs (mandatory)
-
-Outputs must conform to a schema, e.g.:
-
+**Expected output**:
 ```json
 {
-  "decision_summary": "",
+  "decision_summary": "...",
   "options": [
-    {
-      "option": "",
-      "pros": [],
-      "cons": [],
-      "risks": []
-    }
+    {"option": "Centralized SRE", "pros": [...], "cons": [...], "cost": "$750K"},
+    {"option": "Status quo+", "pros": [...], "cons": [...], "cost": "$270K"},
+    {"option": "Hybrid model", "pros": [...], "cons": [...], "cost": "$450K"}
   ],
-  "recommendation": "",
-  "confidence_level": ""
+  "recommendation": "Option C (Hybrid) - fits budget, addresses coordination gaps, lower risk",
+  "confidence_level": "high",
+  "evidence": [
+    {"claim": "...", "source": "quarterly_planning_2024_q4.md", "location": "Section 3"},
+    {"claim": "...", "source": "incident_log.csv", "location": "Q3 data"}
+  ],
+  "conflicts": ["Slack: Tom Chen opposes centralization (ownership concerns)"]
 }
 ```
 
-Use function calling / JSON schema enforcement.
+---
+
+## Testing Challenges
+
+- **Conflicting sources**: Slack disagrees with formal docs
+- **Multi-doc reasoning**: Answer requires CSV + PDF + Slack synthesis
+- **Time-sensitive**: Prioritize newer docs for strategic questions
+- **Failure case**: Refuse queries with insufficient evidence
 
 ---
 
-### 4️⃣ Source Attribution (mandatory)
+## Files
 
-Every factual claim must reference:
+```
+data/
+├── documents/              # 3 markdown files (convert to PDF)
+│   ├── incident_response_process.md
+│   ├── incident_postmortem_2024_q3.md
+│   └── quarterly_planning_2024_q4.md
+├── structured/
+│   ├── incident_log.csv
+│   └── resource_allocation.csv
+└── conversations/
+    └── slack_ops_channel_export.txt
+```
 
-* Document name
-* Chunk ID or page range
-
-No “trust me bro” answers.
-
----
-
-### 5️⃣ Failure Handling
-
-If evidence is insufficient:
-
-* The model must say so
-* Suggest what data is missing
-
----
-
-## ⚙️ Constraints (important)
-
-* 💸 **Cost:**
-
-  * Use small / cheap models
-  * OpenAI GPT-4o-mini / GPT-4.1-mini or local (Ollama + Mistral)
-  * Embeddings once only
-
-* ❌ No LangChain magic chains required
-
-* ✅ Plain Python is preferred
-
-* ❌ No web search
-
-* ❌ No fine-tuning
+See [data/DATA_OVERVIEW.md](data/DATA_OVERVIEW.md) for detailed dataset guide.
 
 ---
 
-## 🛠️ Suggested Tech Stack (you may vary)
+## Tech Stack 
 
-* Python
-* FAISS or Chroma
-* OpenAI / Anthropic / local LLM
-* Pydantic for schema validation
-* Simple CLI or Streamlit UI
+- **Vector DB**: FAISS or Chroma
+- **LLM**: GPT-4o-mini / GPT-4.1-mini / Ollama+Mistral
+- **Embeddings**: text-embedding-3-small (cheap)
+- **Schema validation**: Pydantic
+- **Interface**: CLI or Streamlit
 
----
-
-## 🧪 Evaluation Tasks (you must test these)
-
-Your system must handle:
-
-1. **Conflicting documents**
-
-   * Two docs disagree → surface conflict
-
-2. **Multi-document reasoning**
-
-   * Answer requires CSV + PDF + Slack text
-
-3. **Partial data**
-
-   * Missing info → refuse to over-speculate
-
-4. **Time filtering**
-
-   * Prefer newer docs over outdated ones
-
----
-
-## 📈 Stretch Goals (pick 1–2)
-
-* Re-ranking step
-* Self-critique pass
-* Confidence scoring
-* Chunk quality evaluation
-* Automatic doc freshness detection
-* Cost tracking per query
-
----
-
-## 📄 Deliverables
-
-1. **Repo or folder**
-2. README explaining:
-
-   * Architecture
-   * Trade-offs
-   * Why you *didn’t* fine-tune
-3. Example queries + outputs
-4. One “failure case” you intentionally designed
-
----
-
-## 🧠 What this tests (implicitly)
-
-* Real-world LLM system design
-* Restraint (not over-engineering)
-* RAG quality
-* Decision-support thinking
-* Senior-level judgment
-
-This is **interview-grade** work.
-
----
-
-## 🧩 Bonus Interview Question (answer for yourself)
-
-> “Why is this safer and cheaper than training a model on company data?”
-
-If you can answer that clearly, you’re already ahead of many “AI leads”.
-
----
-
-If you want:
-
-* I can **break this into daily milestones**
-* I can **review your architecture**
-* I can act as **a stakeholder giving changing requirements**
-* I can give you **grading criteria like a hiring panel**
-
-Tell me how you want to run it.
+No LangChain required.

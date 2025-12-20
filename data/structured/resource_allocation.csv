@@ -1,0 +1,10 @@
+team,team_lead,headcount,on_call_engineers,on_call_rotation_days,avg_incidents_per_month,primary_services,annual_budget_usd,tooling_costs_usd,on_call_comp_annual_usd,avg_engineer_salary_usd,total_team_cost_usd,utilization_pct,ops_load_pct,feature_velocity_pts_per_sprint
+payment,dev.patel,3,3,10,17,payment-gateway|checkout-flow|refunds,450000,42000,78000,155000,687000,85,65,23
+platform,lisa.wong,5,5,14,8,api-gateway|notification-service|email-service|cdn-delivery,680000,68000,91000,158000,997000,78,45,34
+billing,anna.kim,4,4,21,4,billing-service|invoicing|subscriptions,520000,28000,62000,152000,762000,72,35,28
+devops,tom.chen,4,4,21,3,infrastructure|kubernetes|ci-cd,580000,95000,62000,165000,902000,88,40,18
+product-backend,jake.chen,8,6,28,2,search-service|recommendations|user-profiles,890000,18000,93000,148000,1149000,82,15,42
+product-frontend,rachel.kumar,7,4,35,1,web-app|mobile-app|admin-dashboard,780000,12000,62000,142000,996000,76,8,48
+analytics,john.smith,4,3,28,2,reporting-service|data-warehouse|dashboards,480000,22000,46000,145000,693000,68,20,31
+security,maria.gonzalez,3,3,21,1,auth-service|access-control|audit-logs,420000,38000,46000,172000,676000,91,30,12
+qa,emma.davis,4,0,0,0,test-automation|quality-assurance,380000,15000,0,118000,513000,70,0,0
