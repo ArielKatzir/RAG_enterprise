@@ -1,98 +1,117 @@
-# RAG Enterprise - Decision-Support Copilot
+# RAG Enterprise - Operations Intelligence Copilot
 
-## What I'm Building
+Internal decision-support AI that retrieves from heterogeneous sources (docs, CSVs, Slack) and generates structured JSON responses with source citations.
 
-An **internal operations AI system** that produces structured, decision-ready outputs from heterogeneous data sources. Not a chatbot—a decision support tool.
-
-**Core challenge**: Multi-document reasoning + conflicting sources + structured outputs + source attribution.
+**Challenge**: Multi-document reasoning + conflicting sources + structured outputs + no fine-tuning.
 
 ---
 
-## Requirements
+## How It Works
 
-✅ **RAG pipeline**: Chunk → Embed → Vector DB → Retrieve top-k
-✅ **Decision outputs**: Pros/cons, risks, recommendations (not just answers)
-✅ **Structured JSON**: Schema-validated responses
-✅ **Source attribution**: Every claim cites document + section
-✅ **Failure handling**: Refuse when evidence insufficient
+```
+Query → Embed → FAISS Search → Top-k Chunks → GPT-4o-mini → Structured JSON
+```
 
-**Constraints**: No fine-tuning. Cheap models only (GPT-4o-mini / local).
+**Pipeline**:
+1. **Chunk & Index** (one-time): Parse markdown/CSV/Slack → chunk → embed → FAISS
+2. **Retrieve**: Embed query → search FAISS → get top-k relevant chunks
+3. **Generate**: Send query + chunks to GPT-4o-mini with schema → get validated DecisionResponse
 
----
-
-## Dataset
-
-**Scenario**: TechCorp (300 employees) debating whether to centralize incident response
-
-| Type | Files | Purpose |
-|------|-------|---------|
-| **Documents** | 3 markdown (→PDF) | Process docs, postmortem, strategic planning |
-| **Structured** | 2 CSV files | Incident log (42 records), resource allocation (9 teams) |
-| **Conversations** | 1 Slack export | 78 messages with conflicting opinions |
-
-**Key feature**: All data is contextually coherent—references same incidents, teams, decisions.
-
----
-
-## Example Decision Query
-
-**Q**: *"Should we centralize incident response or keep team-based ownership?"*
-
-**Expected output**:
+**Output Schema**:
 ```json
 {
   "decision_summary": "...",
-  "options": [
-    {"option": "Centralized SRE", "pros": [...], "cons": [...], "cost": "$750K"},
-    {"option": "Status quo+", "pros": [...], "cons": [...], "cost": "$270K"},
-    {"option": "Hybrid model", "pros": [...], "cons": [...], "cost": "$450K"}
-  ],
-  "recommendation": "Option C (Hybrid) - fits budget, addresses coordination gaps, lower risk",
-  "confidence_level": "high",
-  "evidence": [
-    {"claim": "...", "source": "quarterly_planning_2024_q4.md", "location": "Section 3"},
-    {"claim": "...", "source": "incident_log.csv", "location": "Q3 data"}
-  ],
-  "conflicts": ["Slack: Tom Chen opposes centralization (ownership concerns)"]
+  "options": [{"option": "...", "pros": [], "cons": [], "risks": [], "cost": "..."}],
+  "recommendation": "...",
+  "confidence_level": "high|medium|low",
+  "reasoning": "...",
+  "evidence": [{"claim": "...", "source": "...", "location": "..."}],
+  "conflicts_or_gaps": []
 }
 ```
 
 ---
 
-## Testing Challenges
+## Setup
 
-- **Conflicting sources**: Slack disagrees with formal docs
-- **Multi-doc reasoning**: Answer requires CSV + PDF + Slack synthesis
-- **Time-sensitive**: Prioritize newer docs for strategic questions
-- **Failure case**: Refuse queries with insufficient evidence
+### 1. Install Dependencies
+```bash
+pip install openai faiss-cpu numpy pandas pydantic
+```
+
+### 2. Configure API Key
+
+Create `/Users/arielkatzir/Library/CloudStorage/GoogleDrive-ari.katzir@gmail.com/My Drive/.secrets.json`:
+```json
+{
+  "OPENAI_API_KEY": "sk-..."
+}
+```
+
+Or set environment variable:
+```bash
+export OPENAI_API_KEY="sk-..."
+```
+
+### 3. Build Vector Store (one-time)
+
+```bash
+python -u scripts/build_index.py
+```
+
+This will:
+- Load all data files (markdown, CSV, Slack)
+- Chunk into 198 pieces
+- Embed using OpenAI text-embedding-3-small
+- Save FAISS index to `vector_store/`
+
+Expected time: 30-60 seconds
 
 ---
 
-## Files
+## Usage
 
-```
-data/
-├── documents/              # 3 markdown files (convert to PDF)
-│   ├── incident_response_process.md
-│   ├── incident_postmortem_2024_q3.md
-│   └── quarterly_planning_2024_q4.md
-├── structured/
-│   ├── incident_log.csv
-│   └── resource_allocation.csv
-└── conversations/
-    └── slack_ops_channel_export.txt
+```bash
+python -u src/main.py
 ```
 
-See [data/DATA_OVERVIEW.md](data/DATA_OVERVIEW.md) for detailed dataset guide.
+Then ask questions:
+```
+> Should we centralize incident response?
+> What caused the payment gateway incident?
+> Which team has the most incidents?
+> What do people think about centralization?
+```
+
+**Commands**:
+- `examples` - Show example queries
+- `stats` - Show indexed document stats
+- `quit` - Exit
 
 ---
 
-## Tech Stack 
+## Testing
 
-- **Vector DB**: FAISS or Chroma
-- **LLM**: GPT-4o-mini / GPT-4.1-mini / Ollama+Mistral
-- **Embeddings**: text-embedding-3-small (cheap)
-- **Schema validation**: Pydantic
-- **Interface**: CLI or Streamlit
+```bash
+# Test loaders (no API calls, <1 second)
+python -u debug_loaders.py
 
-No LangChain required.
+# Test retrieval (requires vector_store/, ~2 seconds)
+python -u test_retrieval.py
+
+# Test generation (requires API key, ~20 seconds)
+python -u test_generation.py
+```
+
+---
+
+## Dataset
+
+**Scenario**: TechCorp (300 employees) debating centralized vs distributed incident response
+
+| Type | Files | Content |
+|------|-------|---------|
+| Documents | 3 markdown | Process docs, postmortem (INC-2024-089), Q4 planning with 3 options |
+| Structured | 2 CSV | 42 incidents (Q2-Q3), 9 team resource allocations |
+| Conversations | 1 Slack export | 107 messages across 6 threads with conflicting opinions |
+
