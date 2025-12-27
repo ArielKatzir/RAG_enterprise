@@ -1,6 +1,6 @@
 # RAG Enterprise - Automated Document Intelligence Pipeline
 
-Production-ready RAG system with automated ingestion pipeline for heterogeneous data sources (emails, PDFs, documents). Combines n8n workflow automation with Airflow orchestration for continuous document processing and vector indexing.
+Production-ready RAG system with automated ingestion pipeline for heterogeneous data sources (emails, PDFs, documents). Combines n8n workflow automation with Airflow orchestration for continuous document processing and vector indexing to allow users to interact with LLMs regarding their own documents. 
 
 ## Architecture
 
