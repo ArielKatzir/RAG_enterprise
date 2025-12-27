@@ -27,8 +27,13 @@ def test_query(query: str, top_k: int = 5):
     print("Loading vector store...")
     vector_store = VectorStore(dimension=1536)
 
+    # Use absolute path to vector store
+    import os
+    project_root = "/Users/arielkatzir/Library/CloudStorage/GoogleDrive-ari.katzir@gmail.com/My Drive/Colab Notebooks/rag_enterprise"
+    vector_store_path = os.path.join(project_root, "vector_store")
+
     try:
-        vector_store.load("vector_store")
+        vector_store.load(vector_store_path)
         print(f"✓ Loaded vector store with {vector_store.index.ntotal} vectors\n")
     except FileNotFoundError:
         print("✗ Vector store not found. Run the Airflow DAG first!")
