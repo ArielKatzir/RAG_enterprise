@@ -1,0 +1,142 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -512,
+        -48
+      ],
+      "id": "2045a1c8-2857-416a-a6aa-7c9d6a0f3685",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get email from Gmail trigger\nconst email = $input.item.json;\n\n// Create folder structure\nconst date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD\nconst emailId = email.id || Date.now().toString();\nconst basePath = '/Users/arielkatzir/Library/CloudStorage/GoogleDrive-ari.katzir@gmail.com/My Drive/Colab Notebooks/rag_enterprise/data/staging/gmail';\nconst folderPath = `${basePath}/${date}_${emailId}`;\n\n// Extract email body ← ADD THIS LINE\nconst body = email.textPlain || email.textHtml || '';\n\n// Prepare metadata\nconst metadata = {\n  id: emailId,\n  message_id: email.messageId,\n  thread_id: email.threadId,\n  from: email.from,\n  to: email.to,\n  subject: email.subject,\n  date: email.date,\n  labels: email.labels || [],\n  timestamp: new Date().toISOString()\n};\n\nreturn {\n  json: {\n    folderPath: folderPath,\n    metadataJson: JSON.stringify(metadata, null, 2),\n    body: body,\n    metadataRequest: {\n      path: folderPath + \"/metadata.json\",\n      content: JSON.stringify(metadata, null, 2)\n    },\n    bodyRequest: {\n      path: folderPath + \"/body.txt\",\n      content: body\n    }\n  },\n  binary: {\n    metadata: {\n      data: Buffer.from(JSON.stringify(metadata, null, 2)).toString('base64'),\n      mimeType: 'application/json',\n      fileName: 'metadata.json'\n    },\n    body: {\n      data: Buffer.from(body).toString('base64'),\n      mimeType: 'text/plain',\n      fileName: 'body.txt'\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        -48
+      ],
+      "id": "5c586bac-77a5-42ac-b2a5-655f3d8700e8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8765/write",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "path",
+              "value": "={{$json.metadataRequest.path}}"
+            },
+            {
+              "name": "content",
+              "value": "={{$json.metadataRequest.content}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -64,
+        -144
+      ],
+      "id": "f5d998cc-f73d-46e7-a228-a9ea65142566",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8765/write",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "path",
+              "value": "={{$json.bodyRequest.path}}"
+            },
+            {
+              "name": "content",
+              "value": "={{$json.bodyRequest.content}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -64,
+        48
+      ],
+      "id": "cce2e6e4-6c91-4847-9dc7-1c3198a71abe",
+      "name": "HTTP Request1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a4cdc5f9-996a-4d14-b9c4-f8bba2a3e434",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8c1cb9681deb9e991b89b3d50b938f8578fc30a8fcb7d899884a1aeecec95a64"
+  },
+  "id": "8iCMjncnb79HxdIr",
+  "tags": []
+}

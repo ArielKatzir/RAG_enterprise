@@ -1,2 +1,39 @@
-vector_store
-venv
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Data directories
+data/staging/
+data/archive/
+vector_store/
+
+# Airflow
+airflow/logs/
+airflow/plugins/
+airflow/config/
+airflow/.env
+
+# n8n
+n8n/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.secrets.json
+*.pem
+*.key
